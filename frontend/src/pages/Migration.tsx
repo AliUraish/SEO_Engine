@@ -18,7 +18,7 @@ export function Migration() {
   const create = useCreateMigration(site.id)
   const toast = useToast()
   const [oldUrl, setOldUrl] = useState(site.url)
-  const [newUrl, setNewUrl] = useState('')
+  const [newUrl, setNewUrl] = useState(site.settings.new_site_url ?? '')
   const [selected, setSelected] = useState<string | null>(null)
   const plan = plans?.find((p) => p.id === selected) ?? plans?.[0] ?? null
 
@@ -42,6 +42,11 @@ export function Migration() {
         <p className="mt-1 text-sm text-ink-3">
           The Advisor crawls the old and the new site, maps every URL, lists what the new site loses, and recommends the safest path — usually a staging subdomain first.
         </p>
+        {site.settings.new_site_url && !plans?.length && (
+          <p className="mt-3 inline-flex items-center gap-2 rounded-lg bg-brand-tint px-3 py-2 text-sm">
+            <ArrowRightLeft className="size-4" /> New website on file: <b>{site.settings.new_site_url}</b> — press <b>Compare sites</b> when you're ready (needs the network switch on).
+          </p>
+        )}
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <input className="input max-w-xs" placeholder="https://old-site.com" value={oldUrl} onChange={(e) => setOldUrl(e.target.value)} />
           <ArrowRight className="size-5 text-ink-3" />
