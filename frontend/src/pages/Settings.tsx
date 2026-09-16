@@ -27,6 +27,7 @@ export function Settings() {
     gsc_property: site.gsc_property ?? '',
     rank_drop_threshold: site.settings.rank_drop_threshold ?? 3,
     exclude_paths: (site.settings.exclude_paths ?? []).join(', '),
+    new_site_url: site.settings.new_site_url ?? '',
     crawl_interval_hours: site.settings.schedule?.crawl_interval_hours ?? 168,
     rank_sync_interval_hours: site.settings.schedule?.rank_sync_interval_hours ?? 24,
   })
@@ -42,6 +43,7 @@ export function Settings() {
         gsc_property: form.gsc_property || null,
         settings: {
           rank_drop_threshold: Number(form.rank_drop_threshold),
+          new_site_url: form.new_site_url.trim() || null,
           exclude_paths: form.exclude_paths.split(',').map((s) => s.trim()).filter(Boolean),
           schedule: { crawl_interval_hours: Number(form.crawl_interval_hours), rank_sync_interval_hours: Number(form.rank_sync_interval_hours) },
         },
@@ -73,8 +75,11 @@ export function Settings() {
             <Field label="Name">
               <input className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             </Field>
-            <Field label="URL">
+            <Field label="Current website">
               <input className="input" value={site.url} disabled />
+            </Field>
+            <Field label="New website" hint="the site you are migrating to; used by the Migration Advisor">
+              <input className="input" value={form.new_site_url} onChange={(e) => setForm({ ...form, new_site_url: e.target.value })} placeholder="https://new.desertsound.com.pk" />
             </Field>
             <Field label="Search Console property" hint='e.g. sc-domain:example.com or https://example.com/'>
               <input className="input" value={form.gsc_property} onChange={(e) => setForm({ ...form, gsc_property: e.target.value })} placeholder="sc-domain:example.com" />
