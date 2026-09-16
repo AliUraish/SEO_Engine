@@ -96,17 +96,26 @@ async def stream_events(site: SiteDep, request: Request) -> StreamingResponse:
     db = request.app.state.db
     site_id = site.id
 
+    async def fetch(since: datetime) -> list[AgentEvent]:
+        async with db.session() as s:
+            return list(
+                (await s.scalars(select(AgentEvent).where(AgentEvent.site_id == site_id, AgentEvent.created_at > since).order_by(AgentEvent.created_at))).all()
+            )
+
     async def gen():  # type: ignore[no-untyped-def]
         last = utcnow()
         yield "event: ready\ndata: {}\n\n"
-        while not await request.is_disconnected():
-            async with db.session() as s:
-                rows = (
-                    await s.scalars(select(AgentEvent).where(AgentEvent.site_id == site_id, AgentEvent.created_at > last).order_by(AgentEvent.created_at))
-                ).all()
-            for ev in rows:
-                last = max(last, ev.created_at if ev.created_at.tzinfo else ev.created_at.replace(tzinfo=last.tzinfo))
-                yield f"event: agent\ndata: {json.dumps(EventOut.model_validate(ev).model_dump(mode='json'))}\n\n"
-            await asyncio.sleep(2)
+        try:
+            while not await request.is_disconnected():
+                # shield: a client disconnect must not cancel the query mid-flight, or the pooled
+                # asyncpg connection is left half-open and never returned to the pool
+                rows = await asyncio.shield(fetch(last))
+                for ev in rows:
+                    last = max(last, ev.created_at if ev.created_at.tzinfo else ev.created_at.replace(tzinfo=last.tzinfo))
+                    yield f"event: agent\ndata: {json.dumps(EventOut.model_validate(ev).model_dump(mode='json'))}\n\n"
+                yield ": keep-alive\n\n"
+                await asyncio.sleep(2)
+        except asyncio.CancelledError:
+            return
 
     return StreamingResponse(gen(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
