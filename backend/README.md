@@ -20,7 +20,7 @@ uv run uvicorn app.main:app --reload --port 8000
 ```
 
 - API docs: http://127.0.0.1:8000/docs
-- SQLite at `./data/rankos.db` by default; set `DATABASE_URL=postgresql+asyncpg://…` for Postgres.
+- SQLite at `./data/rankos.db` by default. For **Neon**, paste the console's connection string into `DATABASE_URL` unchanged (`postgresql://…neon.tech/neondb?sslmode=require…`); tables are created on first start.
 - Worker + scheduler run inside the API process (`WORKER_ENABLED=true`); or run them apart with
   `uv run python -m app.worker`.
 
@@ -32,7 +32,7 @@ Each one needs `NETWORK_ENABLED=true` **and** its own credential; otherwise the 
 | Integration | Env | Used by |
 |---|---|---|
 | Crawling the site | `NETWORK_ENABLED` | Crawler, Verifier, Migration Advisor |
-| OpenAI (`OPENAI_MODEL`, default `sol`) | `OPENAI_API_KEY` | Fixer (copy), Keyword Scout (intent/new terms), Migration Advisor (narrative) |
+| OpenAI (`OPENAI_BASE_URL`, default `https://api.openai.com/v1`; reasoning off by default) | `OPENAI_API_KEY` | Fixer (copy), Keyword Scout (intent/new terms), Migration Advisor (narrative) |
 | Search Console | `GSC_SERVICE_ACCOUNT_JSON` + site `gsc_property` | Ranker, Keyword Scout, Fixer (traffic weighting) |
 | Local repo | `REPO_LOCAL_PATH` | Publisher (branch + commit) |
 | GitHub | `GITHUB_TOKEN` + site `repo` | Publisher (push + PR), Verifier (merge status) |
