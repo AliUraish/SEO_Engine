@@ -79,7 +79,7 @@ function Item({ to, label, icon: Icon, end, badge, collapsed }: { to: string; la
   )
 }
 
-export function Sidebar({ pending, collapsed, onToggle }: { pending?: number; collapsed: boolean; onToggle: () => void }) {
+export function Sidebar({ pending, collapsed, onToggle, company }: { pending?: number; collapsed: boolean; onToggle: () => void; company?: string }) {
   return (
     <motion.aside
       animate={{ width: collapsed ? NARROW : WIDE }}
@@ -89,8 +89,9 @@ export function Sidebar({ pending, collapsed, onToggle }: { pending?: number; co
       <div className={cn('flex items-center pt-7 pb-6', collapsed ? 'justify-center' : 'justify-between pr-4 pl-8')}>
         <AnimatePresence initial={false}>
           {!collapsed && (
-            <motion.div key="brand" initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -6 }} transition={{ duration: 0.16 }} className="whitespace-nowrap text-[1.35rem] font-bold tracking-tight">
-              SEO Engine
+            <motion.div key="brand" initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -6 }} transition={{ duration: 0.16 }} className="whitespace-nowrap">
+              <div className="text-[1.35rem] leading-tight font-bold tracking-tight">SEO Engine</div>
+              {company && <div className="text-xs font-medium text-ink-3">{company}</div>}
             </motion.div>
           )}
         </AnimatePresence>
