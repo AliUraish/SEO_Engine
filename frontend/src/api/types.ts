@@ -11,6 +11,8 @@ export interface Site {
     focus_keywords?: Record<string, string>
     exclude_paths?: string[]
     rank_drop_threshold?: number
+    company?: string
+    new_site_url?: string | null
     schedule?: { enabled?: boolean; crawl_interval_hours?: number; rank_sync_interval_hours?: number }
   }
   created_at: string
