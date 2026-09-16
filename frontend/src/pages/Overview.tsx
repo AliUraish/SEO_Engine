@@ -49,7 +49,13 @@ export function Overview() {
             <div className="flex items-center gap-10 py-6 pl-4">
               <div className="relative grid place-items-center">
                 <ScoreRing score={ov?.site_score ?? null} />
-                <div className="absolute text-[5.6rem] leading-none font-medium tracking-tighter tabular-nums">{ov?.site_score != null ? <CountUp value={ov.site_score} /> : '—'}</div>
+                <div className="absolute grid place-items-center">
+                  {ov?.site_score != null ? (
+                    <CountUp value={ov.site_score} className="text-[5.6rem] leading-none font-medium tracking-tighter tabular-nums" />
+                  ) : (
+                    <span className="text-sm font-medium tracking-normal whitespace-nowrap text-ink-3">Run a crawl</span>
+                  )}
+                </div>
               </div>
               <div className="h-28 w-px bg-line" />
               <div className="flex flex-col gap-3">
