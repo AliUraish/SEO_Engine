@@ -28,7 +28,7 @@ export function Shell() {
 
   return (
     <div className="flex h-full">
-      <Sidebar pending={overview?.pending_change_sets} collapsed={collapsed} onToggle={() => setCollapsed((v) => !v)} />
+      <Sidebar pending={overview?.pending_change_sets} collapsed={collapsed} onToggle={() => setCollapsed((v) => !v)} company={site.settings.company ?? site.name} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
           title={title}
