@@ -62,3 +62,13 @@ def test_readability_helpers():
     assert count_syllables("the") == 1
     assert flesch_reading_ease(10, 1, 12) is None
     assert 0 <= flesch_reading_ease(200, 12, 280) <= 100
+
+
+def test_neon_url_normalization():
+    from app.db.base import normalize_postgres_url
+
+    url, args = normalize_postgres_url("postgresql://user:pw@ep-x-123-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
+    assert url == "postgresql+asyncpg://user:pw@ep-x-123-pooler.eu-central-1.aws.neon.tech/neondb"
+    assert args == {"ssl": "require", "statement_cache_size": 0}
+    url, args = normalize_postgres_url("postgres://u:p@localhost:5432/db")
+    assert url == "postgresql+asyncpg://u:p@localhost:5432/db" and args == {}
