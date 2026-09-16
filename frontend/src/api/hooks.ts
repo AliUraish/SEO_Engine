@@ -29,7 +29,7 @@ export const useSites = () => useQuery({ queryKey: ['sites'], queryFn: () => api
 export function useCreateSite() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: { name: string; url: string; repo?: string | null; gsc_property?: string | null }) => api.post<Site>('/sites', body),
+    mutationFn: (body: { name: string; url: string; repo?: string | null; gsc_property?: string | null; settings?: Record<string, unknown> }) => api.post<Site>('/sites', body),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['sites'] }),
   })
 }
