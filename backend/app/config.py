@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
 
     openai_api_key: str | None = None
     openai_model: str = "sol"
-    openai_base_url: str | None = None
+    openai_base_url: str = "https://api.openai.com/v1"
     # Send reasoning={"effort": ...}; only valid for reasoning models, so opt-in.
     openai_reasoning: bool = False
 
@@ -36,6 +36,11 @@ class Settings(BaseSettings):
     worker_enabled: bool = True
     worker_poll_s: float = 1.5
     worker_concurrency: int = Field(default=2, ge=1)
+
+    @field_validator("openai_base_url", mode="before")
+    @classmethod
+    def _default_openai_base_url(cls, value: object) -> object:
+        return value or "https://api.openai.com/v1"
 
     @property
     def cors_origin_list(self) -> list[str]:
